@@ -15,24 +15,47 @@ function renderDiet() {
   remEl.className   = 'text-5xl font-bold tracking-tighter leading-none ' + (rem < 0 ? 'text-app-red' : rem < 300 ? '' : 'text-app-green');
   document.getElementById('diet-sub').textContent = `${rem < 0 ? 'over goal' : 'remaining'} · ${t.calories.toLocaleString()} / ${(g.calories || 1850).toLocaleString()} eaten`;
 
-  document.getElementById('m-pro').textContent       = t.protein + 'g';
-  document.getElementById('m-fat').textContent       = t.fat + 'g';
-  document.getElementById('m-carbs').textContent     = t.carbs + 'g';
-  document.getElementById('m-pro-goal').textContent  = 'goal ' + (g.protein || 160) + 'g';
-  document.getElementById('m-fat-goal').textContent  = 'goal ' + (g.fat || 65) + 'g';
-  document.getElementById('m-wt').textContent        = g.weight ? g.weight + 'lb' : '—';
-  document.getElementById('m-gwt').textContent       = g.goalWeight ? 'goal ' + g.goalWeight + 'lb' : 'set goal';
-
-  const setProg = (id, val, goal, vid, unit) => {
-    const pct = Math.min(val / goal * 100, 100);
-    const el  = document.getElementById(id);
-    el.style.width      = pct + '%';
-    el.style.background = pct >= 100 ? '#ff5000' : (id === 'pc' ? '#00c805' : id === 'pp' ? '#3d85f5' : '#f0b429');
-    document.getElementById(vid).textContent = `${val} / ${goal}${unit}`;
+  const macroColor = (val, goal) => {
+    const pct = val / goal * 100;
+    if (pct >= 100) return '#ff5000';
+    if (pct >= 90)  return '#f0b429';
+    return '';
   };
-  setProg('pc', t.calories, g.calories || 1850, 'pc-val', '');
-  setProg('pp', t.protein,  g.protein  || 160,  'pp-val', 'g');
-  setProg('pf', t.fat,      g.fat      || 65,   'pf-val', 'g');
+
+  const proGoal   = g.protein || 160;
+  const fatGoal   = g.fat     || 65;
+  const carbsGoal = g.carbs   || 200;
+
+  const proEl   = document.getElementById('m-pro');
+  const fatEl   = document.getElementById('m-fat');
+  const carbsEl = document.getElementById('m-carbs');
+  proEl.textContent   = t.protein + 'g';
+  fatEl.textContent   = t.fat + 'g';
+  carbsEl.textContent = t.carbs + 'g';
+  proEl.style.color   = macroColor(t.protein, proGoal);
+  fatEl.style.color   = macroColor(t.fat,     fatGoal);
+  carbsEl.style.color = macroColor(t.carbs,   carbsGoal);
+
+  document.getElementById('m-pro-goal').textContent   = 'goal ' + proGoal + 'g';
+  document.getElementById('m-fat-goal').textContent   = 'goal ' + fatGoal + 'g';
+  document.getElementById('m-carbs-goal').textContent = 'goal ' + carbsGoal + 'g';
+  document.getElementById('m-wt').textContent  = g.weight ? g.weight + 'lb' : '—';
+  document.getElementById('m-gwt').textContent = g.goalWeight ? 'goal ' + g.goalWeight + 'lb' : 'set goal';
+
+  const setProg = (id, val, goal, vid, unit, baseColor) => {
+    const pct    = Math.min(val / goal * 100, 100);
+    const rawPct = val / goal * 100;
+    const el     = document.getElementById(id);
+    el.style.width      = pct + '%';
+    el.style.background = rawPct >= 100 ? '#ff5000' : rawPct >= 90 ? '#f0b429' : baseColor;
+    const valEl = document.getElementById(vid);
+    valEl.textContent = `${val} / ${goal}${unit}`;
+    valEl.style.color = rawPct >= 100 ? '#ff5000' : rawPct >= 90 ? '#f0b429' : '';
+  };
+  setProg('pc',    t.calories, g.calories || 1850, 'pc-val',   '',  '#00c805');
+  setProg('pp',    t.protein,  proGoal,            'pp-val',   'g', '#3d85f5');
+  setProg('pf',    t.fat,      fatGoal,            'pf-val',   'g', '#f0b429');
+  setProg('pcarb', t.carbs,    carbsGoal,          'pcarb-val','g', '#a855f7');
 
   const grouped = {};
   MEALS.forEach(m => grouped[m] = []);

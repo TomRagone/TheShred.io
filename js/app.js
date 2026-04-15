@@ -37,6 +37,7 @@ function loadQuickSettings() {
   document.getElementById('qs-cal').value    = g.calories   || 1850;
   document.getElementById('qs-pro').value    = g.protein    || 160;
   document.getElementById('qs-fat').value    = g.fat        || 65;
+  document.getElementById('qs-carbs').value  = g.carbs      || 200;
   document.getElementById('qs-wt').value     = g.weight     || '';
   document.getElementById('qs-gwt').value    = g.goalWeight || '';
   document.getElementById('qs-budget').value = g.budget     || 2000;

@@ -42,6 +42,7 @@ async function saveGoals() {
   USER.goals.calories   = +document.getElementById('qs-cal').value    || 1850;
   USER.goals.protein    = +document.getElementById('qs-pro').value    || 160;
   USER.goals.fat        = +document.getElementById('qs-fat').value    || 65;
+  USER.goals.carbs      = +document.getElementById('qs-carbs').value  || 200;
   USER.goals.weight     = +document.getElementById('qs-wt').value     || 0;
   USER.goals.goalWeight = +document.getElementById('qs-gwt').value    || 0;
   USER.goals.budget     = +document.getElementById('qs-budget').value || 2000;
